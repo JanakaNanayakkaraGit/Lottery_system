@@ -1,0 +1,107 @@
+<!-- templates/admin/dashboard.html -->
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Tickets</h5>
+                <p class="card-text display-4">{{ total_tickets }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Users</h5>
+                <p class="card-text display-4">{{ total_users }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Recent Draws</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Draw Number</th>
+                            <th>Lottery</th>
+                            <th>Date</th>
+                            <th>Numbers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for draw in recent_draws %}
+                        <tr>
+                            <td>{{ draw.draw_number }}</td>
+                            <td>{{ draw.lottery_type.name }}</td>
+                            <td>{{ draw.draw_date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ draw.winning_numbers }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Active Lotteries</h5>
+                <div class="list-group">
+                    {% for lottery in active_lotteries %}
+                    <div class="list-group-item">
+                        <h6 class="mb-1">{{ lottery.name }}</h6>
+                        <p class="mb-1">Price: Rs. {{ lottery.price }}</p>
+                        <small>Draw Days: {{ lottery.draw_days }}</small>
+                        <a href="{{ url_for('conduct_draw', lottery_id=lottery.id) }}" 
+                           class="btn btn-sm btn-primary float-end">Conduct Draw</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- templates/admin/lottery_types.html -->
+{% extends "base.html" %}
+{% block content %}
+<h2>Manage Lottery Types</h2>
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Add New Lottery</h5>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Price (Rs.)</label>
+                        <input type="number" name="price" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Draw Days</label>
+                        <div class="form-check">
+                            {% for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                            <input type="checkbox" name="draw_days" value="{{ day }}" class="form-check-input">
+                            <label class="form-check-label">{{ day }}</label><br>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Jackpot Amount</label>
+                        <input type="number" name="jackpot" class="form-control" required>
+                    </div>
